@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -31,18 +32,23 @@ import {
 } from "@/components/ui/drawer"
 
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { use } from "react"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Product = {
-    _id: number,
+    _id: string,
     store: string,
-    id: number,
+    id: string,
     name: string,
     price: number,
+    specialPrice: number,
+    historicalLow: number,
     url: string,
     imageUrl: string,
     datetime: string,
+    updated: string,
+    historicalLowDate: string,
     priceHistory: [{
         price: number,
         date: string,
@@ -50,7 +56,7 @@ export type Product = {
 }
 
 export const columns: ColumnDef<Product>[] = [
-    {
+    /* {
         id: "select",
         header: ({ table }) => (
             <Checkbox
@@ -69,12 +75,12 @@ export const columns: ColumnDef<Product>[] = [
                 aria-label="Select row"
             />
         ),
-    },
+    }, */
     {
         accessorKey: "store",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className='rounded-md'
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -88,7 +94,7 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "name",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className='rounded-md'
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -98,46 +104,10 @@ export const columns: ColumnDef<Product>[] = [
             )
         },
         cell: ({ row }) => {
-            return (<Drawer>
-                <DrawerTrigger>
-                    <Button variant="ghost">{row.getValue("name")}</Button>
-                </DrawerTrigger>
-                <DrawerContent>
-                    <DrawerHeader>
-                        <DrawerTitle>{row.getValue("name")}</DrawerTitle>
-                        <DrawerClose />
-                    </DrawerHeader>
-                    <DrawerDescription>
-                        <Table>
-                        <TableCaption>Price history</TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Price</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                    {row.original.priceHistory.slice().reverse().map((price) => (
-                                        <TableRow key={price.date}>
-                                            <TableCell>
-                                                {new Intl.DateTimeFormat('fi-FI').format(new Date(price.date))}
-                                            </TableCell>
-                                            <TableCell>
-                                                {new Intl.NumberFormat('fi-FI', {
-                                                    style: 'currency',
-                                                    currency: 'EUR'
-                                                }).format(price.price)}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                        </Table>
-                    </DrawerDescription>
-                    <DrawerFooter>
-                        <Button variant="ghost">Close</Button>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer>
+            return (
+                <Button className='rounded-md' variant="ghost">
+                    <a href={row.original.url} target="_blank" rel="noreferrer">{row.getValue("name")}</a>
+                </Button>
             )
         },
     },
@@ -145,7 +115,7 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "price",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className='rounded-md'
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -155,16 +125,20 @@ export const columns: ColumnDef<Product>[] = [
             )
         },
         cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("price"))
+            const amount = row.original.specialPrice ? parseFloat(row.original.specialPrice.toString()) : parseFloat(row.getValue("price"))
             const formatted = new Intl.NumberFormat("fi-FI", {
                 style: "currency",
                 currency: "EUR",
             }).format(amount)
 
+            if (!row.original.priceHistory) {
+                return <span>{formatted}</span>;
+            }
+
             return (
                 <Drawer>
                     <DrawerTrigger>
-                        <Button variant="ghost">{formatted}</Button>
+                        <Button className='rounded-md' variant="ghost">{formatted}</Button>
                     </DrawerTrigger>
                     <DrawerContent>
                         <DrawerHeader>
@@ -198,7 +172,7 @@ export const columns: ColumnDef<Product>[] = [
                             </Table>
                         </DrawerDescription>
                         <DrawerFooter>
-                            <Button variant="ghost">Close</Button>
+                            <Button className='rounded-md' variant="ghost">Close</Button>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
@@ -209,17 +183,18 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "datetime",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className='rounded-md'
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Date
+                    Updated
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => {
-            const date = new Date(row.getValue("datetime"));
+            const product = row.original;
+            const date = new Date(product.updated ? product.updated : product.datetime);
             return <div>{date.toLocaleDateString('fi-FI')}</div>
         },
     },
@@ -239,14 +214,14 @@ export const columns: ColumnDef<Product>[] = [
             </HoverCard>
         },
     },
-    {
+    /* {
         accessorKey: "url",
         header: "Link",
         cell: ({ row }) => {
             const url = row.getValue("url") as string;
             return <a href={url} target="_blank" rel="noopener noreferrer">Product Site</a>
         },
-    },
+    }, */
 
     {
         id: "actions",
@@ -256,7 +231,7 @@ export const columns: ColumnDef<Product>[] = [
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 rounded-md">
                             <span className="sr-only">Open menu</span>
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -267,6 +242,16 @@ export const columns: ColumnDef<Product>[] = [
                             onClick={() => navigator.clipboard.writeText(product.id.toString())}
                         >
                             Copy product ID
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => navigator.clipboard.writeText(product.name.toString())}
+                        >
+                            Copy product name
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => navigator.clipboard.writeText(product.url.toString())}
+                        >
+                            Copy website link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -285,12 +270,11 @@ export const columns: ColumnDef<Product>[] = [
                                 }).catch(error => {
                                     console.error('There has been a problem with your fetch operation:', error);
                                 });
-                            }
-                            }
+                            }}
                         >Remove from database</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
-        },
+        }
     },
 ]
