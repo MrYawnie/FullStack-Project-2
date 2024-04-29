@@ -1,4 +1,3 @@
-// post.js
 import mongoose from "mongoose";
 
 const PriceSchema = new mongoose.Schema({

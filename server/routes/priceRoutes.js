@@ -321,22 +321,6 @@ router.get("/search", async (req, res) => {
   }
 });
 
-/* router.get("/products", async (req, res) => {
-  let query;
-  if (req.query.store) {
-    query = PriceSchema.find({ 
-      name: { $regex: '.*' + req.query.q + '.*', $options: 'i' }, 
-      store: { $regex: '.*' + req.query.store + '.*', $options: 'i' }
-    });
-  } else {
-    query = PriceSchema.find({ 
-      name: { $regex: '.*' + req.query.q + '.*', $options: 'i' }
-    });
-  }
-  const products = await query.exec();
-  res.json(products);
-}); */
-
 router.get("/products", async (req, res) => {
   let queryConditions = {};
 
