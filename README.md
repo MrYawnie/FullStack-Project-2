@@ -37,6 +37,7 @@ The course has been comprehensive, offering enough material for further self-stu
 - API Endpoint: [Link](https://fullstack-project-2.onrender.com)
 - Website: [Link](https://full-stack-project-2.vercel.app/)
 - GitHub Repository: [Link](https://github.com/MrYawnie/FullStack-Project-2)
+- Video presentation: [Link](https://youtu.be/yYYNd_5ImRs)
 
 ## Sources
 
