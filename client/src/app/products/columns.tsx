@@ -258,7 +258,7 @@ export const columns: ColumnDef<Product>[] = [
                             onClick={() => {
                                 // Here you can add your logic to remove the product from the database
                                 console.log("Removing product with ID", product.id)
-                                fetch(`https://api.janiandsten.com/api/v1/price-check/delete/${product._id}`, {
+                                fetch(`https://fullstack-project-2.onrender.com/api/v1/price-check/delete/${product._id}`, {
                                     method: 'DELETE',
                                 }).then(response => {
                                     if (!response.ok) {

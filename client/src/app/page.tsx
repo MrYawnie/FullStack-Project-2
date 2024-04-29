@@ -15,7 +15,7 @@ import NavBar from '@/components/navbar';
 import { SkeletonCard } from '@/components/skeletonCard';
 
 async function getData(searchTerm: string): Promise<{ data: Product[]; filterMaxPrice: number }> {
-  const response = await axios.get(`https://api.janiandsten.com/api/v1/price-check/search?q=${searchTerm}`);
+  const response = await axios.get(`https://fullstack-project-2.onrender.com/api/v1/price-check/search?q=${searchTerm}`);
   const data = response.data;
   const filterMaxPrice = data.reduce((max: number, product: Product) => Math.max(max, product.price), 0);
   return { data, filterMaxPrice };
