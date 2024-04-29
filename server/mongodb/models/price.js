@@ -18,11 +18,9 @@ const PriceSchema = new mongoose.Schema({
     imageUrl: { type: String, required: false },
     url: { type: String, required: true },
     datetime: { type: Date, default: Date.now },
-    updated: { type: Date, required: false },
-    soldCount: { type: Number, required: false },
+    updated: { type: Date, default: Date.now },
 });
 
-const PricePost = mongoose.model('Price', PriceSchema);
-/* const PricePost = global.mainDB.connection.model('Price', PriceSchema); */
+const PricePost = mongoose.model('Price-project', PriceSchema);
 
 export default PricePost;

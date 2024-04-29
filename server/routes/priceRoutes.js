@@ -59,7 +59,6 @@ async function getLastentarvikeProducts(query) {
         priceHistory: [{ price: priceToUse }],
         imageUrl: product.imageUrl,
         url: product.url,
-        soldCount: product.soldCnt,
       });
 
       await newProduct.save();
@@ -79,12 +78,6 @@ async function getLastentarvikeProducts(query) {
 
         await existingProduct.save();
         ntfyMessage(existingProduct);
-      }
-
-      if (existingProduct.soldCount !== product.soldCnt) {
-        existingProduct.soldCount = product.soldCnt;
-        existingProduct.updated = Date.now();
-        await existingProduct.save();
       }
     }
   }
