@@ -228,7 +228,7 @@ async function getLastenturvaProducts(query) {
 
     for (const product of responseData) {
       // Check if the product already exists in the database
-      const existingProduct = await PriceSchema.findOne({ id: product.document.id });
+      const existingProduct = await PriceSchema.findOne({ id: product.document._id });
 
       if (!existingProduct) {
         // If the product doesn't exist, create and save the new product
@@ -236,7 +236,7 @@ async function getLastenturvaProducts(query) {
 
         const newProduct = new PriceSchema({
           store: "lastenturva",
-          id: product.document.id,
+          id: product.document._id,
           name: product.document.name,
           price: product.document.price,
           historicalLow: product.document.price,
@@ -269,7 +269,7 @@ async function getLastenturvaProducts(query) {
     // Return processed products
     return responseData.map((product) => ({
       store: "lastenturva",
-      id: product.document.id,
+      id: Number(product.document._id),
       name: product.document.name,
       price: product.document.price,
       imageUrl: product.document.image,
