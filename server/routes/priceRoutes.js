@@ -269,7 +269,7 @@ async function getLastenturvaProducts(query) {
     // Return processed products
     return responseData.map((product) => ({
       store: "lastenturva",
-      id: product.document._id,
+      id: Number(product.document._id),
       name: product.document.name,
       price: product.document.price,
       imageUrl: product.document.image,
